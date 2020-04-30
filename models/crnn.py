@@ -72,18 +72,18 @@ class CRNN(nn.Module):
         conv = self.cnn(input)
         b, c, h, w = conv.size()
         assert h == 1, "the height of conv must be 1"
-        conv = conv.squeeze(2)
+        conv = conv.squeeze(2)#[4,512,26]
         # print("otput shape init",conv.shape)
-        conv = conv.permute(2, 0, 1)  # [w, b, c]
+        conv = conv.permute(2, 0, 1)  # [w, b, c][26,4,512]
         # print("otput shape final",conv.shape)
 
         # rnn features
         output = self.rnn(conv)
-        
+        # output = output.permute(2,1,0)
         # add log_softmax to converge output
-        output = F.log_softmax(output, dim=2)#(26,32,256)
-        output = output.permute(2,1,0)
-        print("otput shape final",output.shape)
+        output = F.log_softmax(output, dim=2)#(26,4,256)
+        
+        # print("otput shape final",output.shape)
 
         return output
 
