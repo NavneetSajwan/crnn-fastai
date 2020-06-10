@@ -47,7 +47,7 @@ In this block
 """
 def data_loader():
     # train
-    tfms = get_transforms()
+    tfms = get_transforms(do_flip = False)
     # tfms = transforms.Compose([transforms.Resize((32,100)), transforms.ToTensor()])
     train_dataset = dataset.lmdbDataset(root=args.trainroot, transform = tfms)
     # assert train_dataset

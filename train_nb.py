@@ -21,7 +21,7 @@ import dataset
 import models.crnn as net
 import params
 import cv2
-bs = 256
+bs = 12
 if not os.path.exists(params.expr_dir):
     os.makedirs(params.expr_dir)
 
@@ -41,8 +41,9 @@ In this block
     Get train and val data_loader
 """
 def data_loader(train_root, val_root):
+	tfms = get_transforms(do_flip = False)
     # train
-    tfms = transforms.Compose([transforms.Resize((32,100)), transforms.ToTensor()])
+    # tfms = transforms.Compose([transforms.Resize((32,100)), transforms.ToTensor()])
     train_dataset = dataset.lmdbDataset(root = train_root, transform = tfms)
     val_dataset = dataset.lmdbDataset(root = val_root, transform= tfms)
     return train_dataset, val_dataset
