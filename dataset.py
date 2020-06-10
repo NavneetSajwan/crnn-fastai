@@ -63,6 +63,10 @@ class lmdbDataset(Dataset):
 
             if self.transform is not None:
                 img = img.apply_tfms(self.transform[0], size=(32,100))
+
+            else:
+                img = img.apply_tfms([], size=(32,100))
+
                 # img = self.transform(img)
 
             label_key = 'label-%09d' % index

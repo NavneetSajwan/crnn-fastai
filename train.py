@@ -60,7 +60,7 @@ def data_loader():
     #         collate_fn=dataset.alignCollate(imgH=params.imgH, imgW=params.imgW, keep_ratio=params.keep_ratio))
     # # dataset.resizeNormalize((params.imgW, params.imgH))
     # # val
-    val_dataset = dataset.lmdbDataset(root=args.valroot, transform= tfms)
+    val_dataset = dataset.lmdbDataset(root=args.valroot, transform= None)
     # assert val_dataset
     # val_loader = torch.utils.data.DataLoader(val_dataset, shuffle=True, batch_size=params.batchSize, num_workers=int(params.workers))
     return train_dataset, val_dataset
