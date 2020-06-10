@@ -13,6 +13,8 @@ import sys
 import utils
 from PIL import Image
 import numpy as np
+# from fastai import *
+from fastai.vision import open_image
 
 
 class lmdbDataset(Dataset):
@@ -51,13 +53,17 @@ class lmdbDataset(Dataset):
             buf.write(imgbuf)
             buf.seek(0)
             try:
-                img = Image.open(buf).convert('L')
+                # print(type(buf))
+                # img = Image.open(buf).convert('L')
+                img = open_image(buf, convert_mode = 'L')
+                # print("image type", type(img))
             except IOError:
                 print('Corrupted image for %d' % index)
                 return self[index + 1]
 
             if self.transform is not None:
-                img = self.transform(img)
+                img = img.apply_tfms(self.transform[0], size=(32,100))
+                # img = self.transform(img)
 
             label_key = 'label-%09d' % index
             label = txn.get(label_key.encode('utf-8'))
@@ -71,18 +77,18 @@ class lmdbDataset(Dataset):
         return img, (label, length)
 
 
-class resizeNormalize(object):
+# class resizeNormalize(object):
 
-    def __init__(self, size, interpolation=Image.BILINEAR):
-        self.size = size
-        self.interpolation = interpolation
-        self.toTensor = transforms.ToTensor()
+#     def __init__(self, size, interpolation=Image.BILINEAR):
+#         self.size = size
+#         self.interpolation = interpolation
+#         self.toTensor = transforms.ToTensor()
 
-    def __call__(self, img):
-        img = img.resize(self.size, self.interpolation)
-        img = self.toTensor(img)
-        img.sub_(0.5).div_(0.5)
-        return img
+#     def __call__(self, img):
+#         img = img.resize(self.size, self.interpolation)
+#         img = self.toTensor(img)
+#         img.sub_(0.5).div_(0.5)
+#         return img
 
 
 class randomSequentialSampler(sampler.Sampler):

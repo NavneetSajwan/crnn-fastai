@@ -1,4 +1,3 @@
-from __future__ import print_function
 from __future__ import division
 
 from fastai import *
@@ -22,7 +21,7 @@ import dataset
 import models.crnn as net
 import params
 import cv2
-bs = 256
+bs = 12
 parser = argparse.ArgumentParser()
 parser.add_argument('-train', '--trainroot', required=True, help='path to train dataset')
 parser.add_argument('-val', '--valroot', required=True, help='path to val dataset')
@@ -48,7 +47,8 @@ In this block
 """
 def data_loader():
     # train
-    tfms = transforms.Compose([transforms.Resize((32,100)), transforms.ToTensor()])
+    tfms = get_transforms()
+    # tfms = transforms.Compose([transforms.Resize((32,100)), transforms.ToTensor()])
     train_dataset = dataset.lmdbDataset(root=args.trainroot, transform = tfms)
     # assert train_dataset
     # if not params.random_sample:
@@ -86,22 +86,29 @@ def collation(samples:BatchSamples, pad_idx:int=0):
 def loss_func(preds, text, length):
     # print(preds.shape)
     preds_size = Variable(torch.LongTensor([preds.size(0)] * bs))
+    # preds = preds.permute(2,1,0)
+    # print('preds shape', preds.shape)
+    # print("shape of ips/ preds", preds.shape)
+    # print("shape of trgt/trgt", text.shape)
+    # print("shape of ip_len/pred_size", preds_size.shape)
+    # print("shape of op_len/length", length.shape)
     return criterion(preds, text, preds_size, length)
 
 if __name__ == "__main__":
     train_ds, val_ds = data_loader()
+    img, _ = train_ds[0]
+    # print(type(img))
     # print(type(train_loader))
-    data = DataBunch.create(train_ds, val_ds, bs = bs, collate_fn= collation)
-    # print(type(data.show_batch()))
-    idx = np.random.randint(0,1000)
-    # print(train_ds[idx])
-    sample = data.one_batch()
-    # print(sample)
-    criterion = CTCLoss()
-    nclass = len(params.alphabet) + 1
-    crnn = net.CRNN(params.imgH, params.nc, nclass, params.nh)
-    learn = Learner(data, crnn, loss_func = loss_func)
+    # data = DataBunch.create(train_ds, val_ds, bs = bs, collate_fn= collation)
+    # idx = np.random.randint(0,bs)
+    # sample = val_ds[idx]
+    # sample = data.one_batch()
+    # print(sample[0].shape, sample[1][0].shape)
+    # criterion = CTCLoss()
+    # nclass = len(params.alphabet) + 1
+    # crnn = net.CRNN(params.imgH, params.nc, nclass, params.nh)
+    # learn = Learner(data, crnn, loss_func = loss_func)
     # print(learn)
-    learn.lr_find()
+    # learn.fit_one_cycle(5, 1e-3)
     # print(type(data.one_batch()[0]))
     # learn = Learner()
