@@ -1,5 +1,9 @@
 # Convolutional Recurrent Neural Network + CTCLoss 
 
+[Note: It is a work in progress. It is based on the Pytorch implementation by Holmeyoung. Please star this repo if you want me to complete this work.]
+
+[Note: Documentation right now is misleading]
+
 I think i have fixed the ctcloss nan problem!
 
 Now!
